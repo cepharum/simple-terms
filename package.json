@@ -1,0 +1,26 @@
+{
+  "name": "simple-terms",
+  "version": "0.0.1",
+  "description": "processes simple terms",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test mocha --ui=tdd --require babel-register test/**/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cepharum/simple-terms.git"
+  },
+  "author": "cepharum GmbH",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cepharum/simple-terms/issues"
+  },
+  "homepage": "https://github.com/cepharum/simple-terms#readme",
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "cross-env": "^5.2.0",
+    "mocha": "^5.2.0",
+    "should": "^13.2.3"
+  }
+}
