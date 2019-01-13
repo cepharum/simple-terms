@@ -1,5 +1,9 @@
 # Simple Terms
 
+This package provides a simple terms processor suitable for reading hierarchical data structures and deriving new information from that. It is designed to support customized processing of data without exposing a full Javascript engine or and intentionally excludes support for code to adjust any provided data. 
+
+For example, in our [forms processor](https://www.npmjs.com/package/forms-processor) this package is used to describe dependencies between fields e.g. making one field's visibility depending on having provided particular value on another one or initialize one value with the input of two other fields e.g. by combining first and last name of a person into full name of an account's holder using a term like `personal.lastName + ", " + personal.firstName`.
+
 ## Install
 
 ```bash
