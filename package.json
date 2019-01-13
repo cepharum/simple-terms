@@ -1,6 +1,6 @@
 {
   "name": "simple-terms",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "processes simple terms",
   "main": "lib/index.js",
   "scripts": {
