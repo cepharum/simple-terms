@@ -917,4 +917,75 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.test( "", "good", "bad" ).should.be.String().which.is.equal( "bad" );
 		} );
 	} );
+
+	describe( "contains `lowercase` which", () => {
+		it( "is a function", () => {
+			Functions.lowercase.should.be.Function();
+		} );
+
+		it( "returns string provided in first argument with all uppercase characters converted to lowercase", () => {
+			Functions.lowercase( "good" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "GOOD" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "Good" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "gOod" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "goOd" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "gooD" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "gOOD" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "GoOD" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "GOoD" ).should.be.String().which.is.equal( "good" );
+			Functions.lowercase( "GOOd" ).should.be.String().which.is.equal( "good" );
+		} );
+
+		it( "works locale-aware", () => {
+			Functions.lowercase( "MÄCHTIG" ).should.be.String().which.is.equal( "mächtig" );
+			Functions.lowercase( "ÉÂ" ).should.be.String().which.is.equal( "éâ" );
+		} );
+	} );
+
+	describe( "contains `uppercase` which", () => {
+		it( "is a function", () => {
+			Functions.uppercase.should.be.Function();
+		} );
+
+		it( "returns string provided in first argument with all lowercase characters converted to uppercase", () => {
+			Functions.uppercase( "GOOD" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "good" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "Good" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "gOod" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "goOd" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "gooD" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "gOOD" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "GoOD" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "GOoD" ).should.be.String().which.is.equal( "GOOD" );
+			Functions.uppercase( "GOOd" ).should.be.String().which.is.equal( "GOOD" );
+		} );
+
+		it( "works locale-aware", () => {
+			Functions.uppercase( "mächtig" ).should.be.String().which.is.equal( "MÄCHTIG" );
+			Functions.uppercase( "éâ" ).should.be.String().which.is.equal( "ÉÂ" );
+		} );
+	} );
+
+	describe( "contains `first` which", () => {
+		it( "is a function", () => {
+			Functions.first.should.be.Function();
+		} );
+
+		it( "returns first non-null argument", () => {
+			const value = {};
+
+			Functions.first( value ).should.be.equal( value );
+
+			Functions.first( null, value ).should.be.equal( value );
+			Functions.first( undefined, value ).should.be.equal( value );
+			Functions.first( false, value ).should.be.equal( false );
+
+			Functions.first( undefined, null, value ).should.be.equal( value );
+			Functions.first( null, undefined, value ).should.be.equal( value );
+			Functions.first( null, null, value ).should.be.equal( value );
+			Functions.first( undefined, undefined, value ).should.be.equal( value );
+			Functions.first( null, false, value ).should.be.equal( false );
+			Functions.first( undefined, false, value ).should.be.equal( false );
+		} );
+	} );
 } );
