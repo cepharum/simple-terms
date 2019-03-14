@@ -994,55 +994,566 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.now.should.be.Function();
 		} );
 
-		it( "returns object with information on current date/time", () => {
-			const value = Functions.now();
-
-			value.should.have.property( "year" ).which.is.a.Number().and.is.greaterThan( 2018 );
-			value.should.have.property( "month" ).which.is.a.Number().and.is.greaterThanOrEqual( 1 ).and.lessThanOrEqual( 12 );
-			value.should.have.property( "day" ).which.is.a.Number().and.is.greaterThanOrEqual( 1 ).and.lessThanOrEqual( 31 );
-			value.should.have.property( "hour" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 23 );
-			value.should.have.property( "minute" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 59 );
-			value.should.have.property( "second" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 59 );
-			value.should.have.property( "dow" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 6 );
+		it( "returns number of seconds since Unix Epoch of current date/time", () => {
+			Functions.now().should.be.Number().which.is.greaterThan( 0 );
 		} );
 	} );
 
-	describe( "contains `datetime` which", () => {
+	describe( "contains `parsedate` which", () => {
 		it( "is a function", () => {
-			Functions.datetime.should.be.Function();
+			Functions.parsedate.should.be.Function();
+		} );
+
+		it( "returns number of seconds since Unix Epoch of current time when omitting argument", () => {
+			const a = Functions.parsedate();
+			const b = Date.now() / 1000;
+
+			a.should.be.Number().which.is.greaterThan( 0 );
+			b.should.be.Number().which.is.greaterThan( 0 );
+
+			( b - a ).should.be.greaterThanOrEqual( 0 ).and.lessThan( 1 );
+		} );
+
+		it( "returns number of seconds since Unix Epoch of current time when providing `undefined`", () => {
+			const a = Functions.parsedate( undefined );
+			const b = Date.now() / 1000;
+
+			a.should.be.Number().which.is.greaterThan( 0 );
+			b.should.be.Number().which.is.greaterThan( 0 );
+
+			( b - a ).should.be.greaterThanOrEqual( 0 ).and.lessThan( 1 );
+		} );
+
+		it( "returns number of seconds since Unix Epoch of current time when providing `null`", () => {
+			const a = Functions.parsedate( null );
+			const b = Date.now() / 1000;
+
+			a.should.be.Number().which.is.greaterThan( 0 );
+			b.should.be.Number().which.is.greaterThan( 0 );
+
+			( b - a ).should.be.greaterThanOrEqual( 0 ).and.lessThan( 1 );
+		} );
+
+		it( "returns number of seconds since Unix Epoch for provided instance of `Date`", () => {
+			Functions.parsedate( new Date( "1970-01-01 00:00:00 UTC" ) ).should.be.Number().which.is.equal( 0 );
+
+			const a = Functions.parsedate( new Date( "2019-01-01" ) );
+			const b = Functions.parsedate( new Date( "2019-01-02" ) );
+
+			a.should.be.Number().which.is.greaterThan( 0 );
+			b.should.be.Number().which.is.greaterThan( 0 );
+
+			( b - a ).should.be.equal( 86400 );
+		} );
+
+		it( "returns number of seconds since Unix Epoch for provided string describing date/time", () => {
+			Functions.parsedate( "1970-01-01 00:00:00 UTC" ).should.be.Number().which.is.equal( 0 );
+
+			const a = Functions.parsedate( "2019-01-01" );
+			const b = Functions.parsedate( "2019-01-02" );
+
+			a.should.be.Number().which.is.greaterThan( 0 );
+			b.should.be.Number().which.is.greaterThan( 0 );
+
+			( b - a ).should.be.equal( 86400 );
+		} );
+
+		it( "passes number of seconds since Unix Epoch provided as number", () => {
+			Functions.parsedate( 0 ).should.be.Number().which.is.equal( 0 );
+			Functions.parsedate( "0" ).should.be.Number().which.is.equal( 0 );
+
+			const a = Functions.parsedate( Math.round( new Date( "2019-01-01" ).getTime() / 1000 ) );
+			const b = Functions.parsedate( Math.round( new Date( "2019-01-02" ).getTime() / 1000 ) );
+
+			a.should.be.Number().which.is.greaterThan( 0 );
+			b.should.be.Number().which.is.greaterThan( 0 );
+
+			( b - a ).should.be.equal( 86400 );
+		} );
+	} );
+
+	describe( "contains `describedate` which", () => {
+		it( "is a function", () => {
+			Functions.describedate.should.be.Function();
+		} );
+
+		it( "returns object describing properties of current date/time when omitting argument", () => {
+			const a = Functions.describedate();
+			const now = new Date();
+
+			a.should.be.an.Object();
+			a.should.have.ownProperty( "year" ).which.is.a.Number().and.equal( now.getFullYear() );
+			a.should.have.ownProperty( "month" ).which.is.a.Number().and.equal( now.getMonth() + 1 );
+			a.should.have.ownProperty( "day" ).which.is.a.Number().and.equal( now.getDate() );
+			a.should.have.ownProperty( "hour" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "minute" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "second" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "dow" ).which.is.a.Number().and.equal( now.getDay() );
+		} );
+
+		it( "returns object describing properties of current date/time when providing `undefined`", () => {
+			const a = Functions.describedate( undefined );
+			const now = new Date();
+
+			a.should.be.an.Object();
+			a.should.have.ownProperty( "year" ).which.is.a.Number().and.equal( now.getFullYear() );
+			a.should.have.ownProperty( "month" ).which.is.a.Number().and.equal( now.getMonth() + 1 );
+			a.should.have.ownProperty( "day" ).which.is.a.Number().and.equal( now.getDate() );
+			a.should.have.ownProperty( "hour" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "minute" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "second" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "dow" ).which.is.a.Number().and.equal( now.getDay() );
+		} );
+
+		it( "returns object describing properties of current date/time when providing `null`", () => {
+			const a = Functions.describedate( null );
+			const now = new Date();
+
+			a.should.be.an.Object();
+			a.should.have.ownProperty( "year" ).which.is.a.Number().and.equal( now.getFullYear() );
+			a.should.have.ownProperty( "month" ).which.is.a.Number().and.equal( now.getMonth() + 1 );
+			a.should.have.ownProperty( "day" ).which.is.a.Number().and.equal( now.getDate() );
+			a.should.have.ownProperty( "hour" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "minute" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "second" ).which.is.a.Number().and.greaterThanOrEqual( 0 );
+			a.should.have.ownProperty( "dow" ).which.is.a.Number().and.equal( now.getDay() );
+		} );
+
+		it( "returns object describing properties of provided instance of Date", () => {
+			const a = Functions.describedate( new Date( "2019-02-01 03:04:06" ) );
+
+			a.should.be.an.Object();
+			a.should.have.ownProperty( "year" ).which.is.a.Number().and.equal( 2019 );
+			a.should.have.ownProperty( "month" ).which.is.a.Number().and.equal( 2 );
+			a.should.have.ownProperty( "day" ).which.is.a.Number().and.equal( 1 );
+			a.should.have.ownProperty( "hour" ).which.is.a.Number().and.equal( 3 );
+			a.should.have.ownProperty( "minute" ).which.is.a.Number().and.equal( 4 );
+			a.should.have.ownProperty( "second" ).which.is.a.Number().and.equal( 6 );
+			a.should.have.ownProperty( "dow" ).which.is.a.Number().and.equal( 5 ); // 5 = friday
+		} );
+
+		it( "returns object describing properties of date/time given as string", () => {
+			const a = Functions.describedate( "2019-02-01 03:04:06" );
+
+			a.should.be.an.Object();
+			a.should.have.ownProperty( "year" ).which.is.a.Number().and.equal( 2019 );
+			a.should.have.ownProperty( "month" ).which.is.a.Number().and.equal( 2 );
+			a.should.have.ownProperty( "day" ).which.is.a.Number().and.equal( 1 );
+			a.should.have.ownProperty( "hour" ).which.is.a.Number().and.equal( 3 );
+			a.should.have.ownProperty( "minute" ).which.is.a.Number().and.equal( 4 );
+			a.should.have.ownProperty( "second" ).which.is.a.Number().and.equal( 6 );
+			a.should.have.ownProperty( "dow" ).which.is.a.Number().and.equal( 5 ); // 5 = friday
+		} );
+	} );
+
+	describe( "contains `formatdate` which", () => {
+		it( "is a function", () => {
+			Functions.formatdate.should.be.Function();
 		} );
 
 		it( "returns string representing some described date/time", () => {
-			Functions.datetime( "d.m.y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "01.01.2019" );
-			Functions.datetime( "d.m.y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
-			Functions.datetime( "D.M.Y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "01.01.2019" );
-			Functions.datetime( "D.M.Y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
-			Functions.datetime( "y-m-d", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "2019-01-01" );
-			Functions.datetime( "y-m-d", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "2019-12-31" );
-			Functions.datetime( "j.n.y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "1.1.2019" );
-			Functions.datetime( "j.n.y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
-			Functions.datetime( "J.N.Y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "1.1.2019" );
-			Functions.datetime( "J.N.Y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
+			Functions.formatdate( "d.m.y", new Date( "2019-01-01" ) ).should.be.String().which.is.equal( "01.01.2019" );
+			Functions.formatdate( "d.m.y", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "31.12.2019" );
+			Functions.formatdate( "D.M.Y", new Date( "2019-01-01" ) ).should.be.String().which.is.equal( "01.01.2019" );
+			Functions.formatdate( "D.M.Y", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "31.12.2019" );
+			Functions.formatdate( "y-m-d", new Date( "2019-01-01" ) ).should.be.String().which.is.equal( "2019-01-01" );
+			Functions.formatdate( "y-m-d", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "2019-12-31" );
+			Functions.formatdate( "j.n.y", new Date( "2019-01-01" ) ).should.be.String().which.is.equal( "1.1.2019" );
+			Functions.formatdate( "j.n.y", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "31.12.2019" );
+			Functions.formatdate( "J.N.Y", new Date( "2019-01-01" ) ).should.be.String().which.is.equal( "1.1.2019" );
+			Functions.formatdate( "J.N.Y", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "31.12.2019" );
 
-			Functions.datetime( "\\y-\\m-\\d", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "y-m-d" );
-			Functions.datetime( "\\j.\\n.\\y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "j.n.y" );
-			Functions.datetime( "\\Y-\\M-\\D", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "Y-M-D" );
-			Functions.datetime( "\\J.\\N.\\Y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "J.N.Y" );
+			Functions.formatdate( "\\y-\\m-\\d", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "y-m-d" );
+			Functions.formatdate( "\\j.\\n.\\y", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "j.n.y" );
+			Functions.formatdate( "\\Y-\\M-\\D", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "Y-M-D" );
+			Functions.formatdate( "\\J.\\N.\\Y", new Date( "2019-12-31" ) ).should.be.String().which.is.equal( "J.N.Y" );
 
-			Functions.datetime( "h:i:s", { hour: 0, minute: 0, second: 0 } ).should.be.String().which.is.equal( "00:00:00" );
-			Functions.datetime( "h:i:s", { hour: 23, minute: 59, second: 59 } ).should.be.String().which.is.equal( "23:59:59" );
-			Functions.datetime( "h:i:s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "09:09:09" );
-			Functions.datetime( "g:i:s", { hour: 0, minute: 0, second: 0 } ).should.be.String().which.is.equal( "0:00:00" );
-			Functions.datetime( "g:i:s", { hour: 23, minute: 59, second: 59 } ).should.be.String().which.is.equal( "23:59:59" );
-			Functions.datetime( "g:i:s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "9:09:09" );
+			Functions.formatdate( "h:i:s", new Date( "2019-01-01 00:00:00" ) ).should.be.String().which.is.equal( "00:00:00" );
+			Functions.formatdate( "h:i:s", new Date( "2019-01-01 23:59:59" ) ).should.be.String().which.is.equal( "23:59:59" );
+			Functions.formatdate( "h:i:s", new Date( "2019-01-01 09:09:09" ) ).should.be.String().which.is.equal( "09:09:09" );
+			Functions.formatdate( "g:i:s", new Date( "2019-01-01 00:00:00" ) ).should.be.String().which.is.equal( "0:00:00" );
+			Functions.formatdate( "g:i:s", new Date( "2019-01-01 23:59:59" ) ).should.be.String().which.is.equal( "23:59:59" );
+			Functions.formatdate( "g:i:s", new Date( "2019-01-01 09:09:09" ) ).should.be.String().which.is.equal( "9:09:09" );
 
-			Functions.datetime( "\\h:\\i:\\s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "h:i:s" );
-			Functions.datetime( "\\H:\\I:\\S", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "H:I:S" );
-			Functions.datetime( "\\g:\\i:\\s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "g:i:s" );
-			Functions.datetime( "\\G:\\I:\\S", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "G:I:S" );
+			Functions.formatdate( "\\h:\\i:\\s", new Date( "2019-01-01 09:09:09" ) ).should.be.String().which.is.equal( "h:i:s" );
+			Functions.formatdate( "\\H:\\I:\\S", new Date( "2019-01-01 09:09:09" ) ).should.be.String().which.is.equal( "H:I:S" );
+			Functions.formatdate( "\\g:\\i:\\s", new Date( "2019-01-01 09:09:09" ) ).should.be.String().which.is.equal( "g:i:s" );
+			Functions.formatdate( "\\G:\\I:\\S", new Date( "2019-01-01 09:09:09" ) ).should.be.String().which.is.equal( "G:I:S" );
 
-			Functions.datetime( "y-m-dTh:i:s", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "2019-01-01T00:00:00" );
-			Functions.datetime( "y-m-dTh:i:s", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "2019-12-31T00:00:00" );
+			Functions.formatdate( "y-m-dTh:i:s", new Date( "2019-01-01 00:00:00" ) ).should.be.String().which.is.equal( "2019-01-01T00:00:00" );
+			Functions.formatdate( "y-m-dTh:i:s", new Date( "2019-12-31 00:00:00" ) ).should.be.String().which.is.equal( "2019-12-31T00:00:00" );
+		} );
+	} );
+
+	describe( "contains `droptime` which", () => {
+		it( "is a function", () => {
+			Functions.droptime.should.be.Function();
+		} );
+
+		it( "returns seconds since Unix Epoch of midnight starting day in a given timestamp", () => {
+			const ts = Functions.parsedate( "2015-09-01 12:34:56" );
+
+			const raw = Functions.describedate( ts );
+			raw.hour.should.be.Number().which.is.equal( 12 );
+			raw.minute.should.be.Number().which.is.equal( 34 );
+			raw.second.should.be.Number().which.is.equal( 56 );
+
+			const trimmed = Functions.describedate( Functions.droptime( ts ) );
+			trimmed.hour.should.be.Number().which.is.equal( 0 );
+			trimmed.minute.should.be.Number().which.is.equal( 0 );
+			trimmed.second.should.be.Number().which.is.equal( 0 );
+		} );
+	} );
+
+	describe( "contains `dateadd` which", () => {
+		it( "is a function", () => {
+			Functions.dateadd.should.be.Function();
+		} );
+
+		it( "returns seconds since Unix Epoch of timestamp resulting from adjusting some provided timestamp", () => {
+			const ts = Functions.parsedate( "2019-09-01 12:34:56" );
+
+			const raw = Functions.describedate( ts );
+			raw.year.should.be.Number().which.is.equal( 2019 );
+			raw.month.should.be.Number().which.is.equal( 9 );
+			raw.day.should.be.Number().which.is.equal( 1 );
+			raw.hour.should.be.Number().which.is.equal( 12 );
+			raw.minute.should.be.Number().which.is.equal( 34 );
+			raw.second.should.be.Number().which.is.equal( 56 );
+
+			let adjust = Functions.describedate( Functions.dateadd( ts, 1, "s" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 57 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, -1, "s" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 55 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, 1, "i" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 35 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, -1, "i" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 33 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, 1, "h" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 13 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, -1, "h" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 11 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, 1, "d" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 2 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, -1, "d" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 8 );
+			adjust.day.should.be.Number().which.is.equal( 31 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, 1, "w" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 8 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, -1, "w" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 8 );
+			adjust.day.should.be.Number().which.is.equal( 25 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, 1, "m" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 10 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, -1, "m" ) );
+			adjust.year.should.be.Number().which.is.equal( 2019 );
+			adjust.month.should.be.Number().which.is.equal( 8 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, 1, "y" ) );
+			adjust.year.should.be.Number().which.is.equal( 2020 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+
+			adjust = Functions.describedate( Functions.dateadd( ts, -1, "y" ) );
+			adjust.year.should.be.Number().which.is.equal( 2018 );
+			adjust.month.should.be.Number().which.is.equal( 9 );
+			adjust.day.should.be.Number().which.is.equal( 1 );
+			adjust.hour.should.be.Number().which.is.equal( 12 );
+			adjust.minute.should.be.Number().which.is.equal( 34 );
+			adjust.second.should.be.Number().which.is.equal( 56 );
+		} );
+	} );
+
+	describe( "contains `datediff` which", () => {
+		it( "is a function", () => {
+			Functions.datediff.should.be.Function();
+		} );
+
+		it( "returns number of seconds between two dates", () => {
+			[
+				[ "2019-01-02", "2019-01-01", 86400 ],
+				[ "2019-01-01 00:00:01", "2019-01-01 00:00:00", 1 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ) ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns negative number of seconds between two dates when reference in 2nd argument is past tested one in 1st argument", () => {
+			[
+				[ "2019-01-01", "2019-01-02", -86400 ],
+				[ "2019-01-01 00:00:00", "2019-01-01 00:00:01", -1 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ) ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns absolute number of seconds between two dates when reference in 2nd argument is past tested one in 1st argument on demand", () => {
+			[
+				[ "2019-01-01", "2019-01-02", 86400 ],
+				[ "2019-01-01 00:00:00", "2019-01-01 00:00:01", 1 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, null, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( testee, reference, "s", true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), null, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), "s", true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns number of minutes between two dates on demand", () => {
+			const unit = "i";
+
+			[
+				[ "2019-01-02", "2019-01-01", 1440 ],
+				[ "2019-01-01 00:01:00", "2019-01-01 00:00:00", 1 ],
+				[ "2019-01-01 00:01:00", "2019-01-01 00:00:30", 0.5 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns number of hours between two dates on demand", () => {
+			const unit = "h";
+
+			[
+				[ "2019-01-02", "2019-01-01", 24 ],
+				[ "2019-01-01 01:00:00", "2019-01-01 00:00:00", 1 ],
+				[ "2019-01-01 01:00:00", "2019-01-01 00:30:00", 0.5 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns number of days between two dates on demand", () => {
+			const unit = "d";
+
+			[
+				[ "2019-01-02", "2019-01-01", 1 ],
+				[ "2019-02-01", "2019-01-01", 31 ],
+				[ "2019-01-02 12:00:00", "2019-01-01 12:00:00", 1 ],
+				[ "2019-01-02 00:00:00", "2019-01-01 12:00:00", 0.5 ],
+				[ "2019-01-02 12:00:00", "2019-01-02 00:00:00", 0.5 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns number of days between two dates on demand", () => {
+			const unit = "w";
+
+			[
+				[ "2019-01-08", "2019-01-01", 1 ],
+				[ "2019-01-29", "2019-01-01", 4 ],
+				[ "2019-01-08 12:00:00", "2019-01-01 12:00:00", 1 ],
+				[ "2019-01-05 00:00:00", "2019-01-01 12:00:00", 0.5 ],
+				[ "2019-01-08 12:00:00", "2019-01-05 00:00:00", 0.5 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns (nonlinear) number of months between two dates on demand", () => {
+			const unit = "nm";
+
+			[
+				[ "2021-02-01", "2019-02-01", 24 ],
+				[ "2019-02-01", "2019-01-01", 1 ],
+				[ "2019-03-01", "2019-02-01", 1 ],
+				[ "2019-02-15", "2019-02-01", 0.5 ],
+				[ "2019-03-15", "2019-02-15", 1 ],
+				[ "2019-03-01", "2019-02-15", 0.5 ],
+				[ "2019-03-31", "2019-02-28", 1 ],  // odd but desired result in non-linear calculations
+				[ "2020-02-29", "2019-02-28", 12 ], // odd but desired result in non-linear calculations
+				[ "2019-08-08 12:00:00", "2019-07-08 12:00:00", 1 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns (linear) number of months between two dates on demand", () => {
+			const unit = "m";
+
+			[
+				[ "2021-02-01", "2019-02-01", 24 ],
+				[ "2019-02-01", "2019-01-01", 1 ],
+				[ "2019-03-01", "2019-02-01", 1 ],
+				[ "2019-02-15", "2019-02-01", 0.5 ],
+				[ "2019-03-01", "2019-02-15", 0.5 ],
+				[ "2019-03-16 12:00:00", "2019-03-01", 0.5 ],
+				[ "2019-08-08 12:00:00", "2019-07-08 12:00:00", 1 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns (nonlinear) number of years between two dates on demand", () => {
+			const unit = "ny";
+
+			[
+				[ "2021-02-01", "2019-02-01", 2 ],
+				[ "2019-07-01", "2019-01-01", 0.5 ],
+				[ "2020-02-28", "2019-02-27", 1.003 ],
+				[ "2020-02-28", "2019-02-28", 1 ], // odd but desired result in non-linear calculations
+				[ "2020-02-29", "2019-02-28", 1 ], // odd but desired result in non-linear calculations
+				[ "2020-07-08 12:00:00", "2019-07-08 12:00:00", 1 ],
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
+		} );
+
+		it( "returns (linear) number of years between two dates on demand", () => {
+			const unit = "y";
+
+			[
+				[ "2021-02-01", "2019-02-01", 2 ],
+				[ "2019-07-01", "2019-01-01", 0.5 ],
+				[ "2020-02-28", "2019-02-27", 1 ], // matches due to rounding
+				[ "2019-02-28 00:00:00", "2018-02-28 00:00:00", 1 ],
+				[ "2020-02-28 00:00:00", "2019-02-28 00:00:00", 0.997 ],
+				[ "2020-03-01 00:00:00", "2019-03-01 00:00:00", 1 ], // matches due to rounding
+				[ "2020-07-08 12:00:00", "2019-07-08 12:00:00", 1 ], // matches due to rounding
+			]
+				.forEach( ( [ testee, reference, result ] ) => {
+					Functions.datediff( testee, reference, unit ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( testee ), new Date( reference ), unit ).should.be.Number().which.is.equal( result );
+
+					Functions.datediff( reference, testee, unit ).should.be.Number().which.is.equal( -result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit ).should.be.Number().which.is.equal( -result );
+
+					Functions.datediff( reference, testee, unit, true ).should.be.Number().which.is.equal( result );
+					Functions.datediff( new Date( reference ), new Date( testee ), unit, true ).should.be.Number().which.is.equal( result );
+				} );
 		} );
 	} );
 
