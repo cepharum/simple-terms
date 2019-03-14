@@ -618,40 +618,40 @@ describe( "Set of functions available in scope of a term", () => {
 		} );
 	} );
 
-	describe( "contains `findindex` which", () => {
+	describe( "contains `indexof` which", () => {
 		it( "is a function", () => {
-			Functions.findindex.should.be.Function();
+			Functions.indexof.should.be.Function();
 		} );
 
 		it( "finds element in a given array matching given string", () => {
-			Functions.findindex( [ "foo", "bar", "baz", "bam" ], "baz" ).should.be.Number().which.is.equal( 2 );
-			Functions.findindex( [ 1, 2, 10, 23, 50 ], "23" ).should.be.Number().which.is.equal( 3 );
-			Functions.findindex( [ "23", "45", "678" ], 23.0 ).should.be.Number().which.is.equal( 0 );
+			Functions.indexof( [ "foo", "bar", "baz", "bam" ], "baz" ).should.be.Number().which.is.equal( 2 );
+			Functions.indexof( [ 1, 2, 10, 23, 50 ], "23" ).should.be.Number().which.is.equal( 3 );
+			Functions.indexof( [ "23", "45", "678" ], 23.0 ).should.be.Number().which.is.equal( 0 );
 		} );
 
 		it( "does not find elements in a given array on given string matching elements partially, only", () => {
-			Functions.findindex( [ "foo", "bar", "baz", "bam" ], "az" ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( [ 1, 2, 10, 23, 50 ], "3" ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( [ "23", "45", "678" ], 5.0 ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( [ "foo", "bar", "baz", "bam" ], "az" ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( [ 1, 2, 10, 23, 50 ], "3" ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( [ "23", "45", "678" ], 5.0 ).should.be.Number().which.is.equal( -1 );
 		} );
 
 		it( "finds element in a given array matching given regular expression", () => {
-			Functions.findindex( [ "foo", "bar", "baz", "bam" ], "ba[rz]", true ).should.be.Number().which.is.equal( 1 );
-			Functions.findindex( [ 1, 2, 10, 23, 50 ], "23?", true ).should.be.Number().which.is.equal( 1 );
+			Functions.indexof( [ "foo", "bar", "baz", "bam" ], "ba[rz]", true ).should.be.Number().which.is.equal( 1 );
+			Functions.indexof( [ 1, 2, 10, 23, 50 ], "23?", true ).should.be.Number().which.is.equal( 1 );
 		} );
 
 		it( "never finds anything when providing non-array in first argument", () => {
-			Functions.findindex( null, null ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( undefined, undefined ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( false, false ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( true, true ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( "", "" ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( "test", "test" ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( 0, 0 ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( 1, 1 ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( -100, -100 ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( { test: 1 }, "test" ).should.be.Number().which.is.equal( -1 );
-			Functions.findindex( { test: 1 }, 1 ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( null, null ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( undefined, undefined ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( false, false ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( true, true ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( "", "" ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( "test", "test" ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( 0, 0 ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( 1, 1 ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( -100, -100 ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( { test: 1 }, "test" ).should.be.Number().which.is.equal( -1 );
+			Functions.indexof( { test: 1 }, 1 ).should.be.Number().which.is.equal( -1 );
 		} );
 	} );
 
@@ -986,6 +986,162 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.first( undefined, undefined, value ).should.be.equal( value );
 			Functions.first( null, false, value ).should.be.equal( false );
 			Functions.first( undefined, false, value ).should.be.equal( false );
+		} );
+	} );
+
+	describe( "contains `now` which", () => {
+		it( "is a function", () => {
+			Functions.now.should.be.Function();
+		} );
+
+		it( "returns object with information on current date/time", () => {
+			const value = Functions.now();
+
+			value.should.have.property( "year" ).which.is.a.Number().and.is.greaterThan( 2018 );
+			value.should.have.property( "month" ).which.is.a.Number().and.is.greaterThanOrEqual( 1 ).and.lessThanOrEqual( 12 );
+			value.should.have.property( "day" ).which.is.a.Number().and.is.greaterThanOrEqual( 1 ).and.lessThanOrEqual( 31 );
+			value.should.have.property( "hour" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 23 );
+			value.should.have.property( "minute" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 59 );
+			value.should.have.property( "second" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 59 );
+			value.should.have.property( "dow" ).which.is.a.Number().and.is.greaterThanOrEqual( 0 ).and.lessThanOrEqual( 6 );
+		} );
+	} );
+
+	describe( "contains `datetime` which", () => {
+		it( "is a function", () => {
+			Functions.datetime.should.be.Function();
+		} );
+
+		it( "returns string representing some described date/time", () => {
+			Functions.datetime( "d.m.y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "01.01.2019" );
+			Functions.datetime( "d.m.y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
+			Functions.datetime( "D.M.Y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "01.01.2019" );
+			Functions.datetime( "D.M.Y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
+			Functions.datetime( "y-m-d", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "2019-01-01" );
+			Functions.datetime( "y-m-d", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "2019-12-31" );
+			Functions.datetime( "j.n.y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "1.1.2019" );
+			Functions.datetime( "j.n.y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
+			Functions.datetime( "J.N.Y", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "1.1.2019" );
+			Functions.datetime( "J.N.Y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "31.12.2019" );
+
+			Functions.datetime( "\\y-\\m-\\d", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "y-m-d" );
+			Functions.datetime( "\\j.\\n.\\y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "j.n.y" );
+			Functions.datetime( "\\Y-\\M-\\D", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "Y-M-D" );
+			Functions.datetime( "\\J.\\N.\\Y", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "J.N.Y" );
+
+			Functions.datetime( "h:i:s", { hour: 0, minute: 0, second: 0 } ).should.be.String().which.is.equal( "00:00:00" );
+			Functions.datetime( "h:i:s", { hour: 23, minute: 59, second: 59 } ).should.be.String().which.is.equal( "23:59:59" );
+			Functions.datetime( "h:i:s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "09:09:09" );
+			Functions.datetime( "g:i:s", { hour: 0, minute: 0, second: 0 } ).should.be.String().which.is.equal( "0:00:00" );
+			Functions.datetime( "g:i:s", { hour: 23, minute: 59, second: 59 } ).should.be.String().which.is.equal( "23:59:59" );
+			Functions.datetime( "g:i:s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "9:09:09" );
+
+			Functions.datetime( "\\h:\\i:\\s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "h:i:s" );
+			Functions.datetime( "\\H:\\I:\\S", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "H:I:S" );
+			Functions.datetime( "\\g:\\i:\\s", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "g:i:s" );
+			Functions.datetime( "\\G:\\I:\\S", { hour: 9, minute: 9, second: 9 } ).should.be.String().which.is.equal( "G:I:S" );
+
+			Functions.datetime( "y-m-dTh:i:s", { day: 1, month: 1, year: 2019 } ).should.be.String().which.is.equal( "2019-01-01T00:00:00" );
+			Functions.datetime( "y-m-dTh:i:s", { day: 31, month: 12, year: 2019 } ).should.be.String().which.is.equal( "2019-12-31T00:00:00" );
+		} );
+	} );
+
+	describe( "contains `random` which", () => {
+		it( "is a function", () => {
+			Functions.random.should.be.Function();
+		} );
+
+		it( "returns random positive integer", () => {
+			for ( let i = 0; i < 1000; i++ ) {
+				Functions.random().should.be.Number().which.is.greaterThanOrEqual( 0 );
+			}
+		} );
+
+		it( "returns random integer in selected range", () => {
+			for ( let i = 0; i < 1000; i++ ) {
+				Functions.random( 59, 70 ).should.be.Number().which.is.greaterThanOrEqual( 59 ).and.lessThanOrEqual( 70 );
+			}
+		} );
+
+		it( "returns random negative integer in selected range", () => {
+			for ( let i = 0; i < 1000; i++ ) {
+				Functions.random( -70, -59 ).should.be.Number().which.is.greaterThanOrEqual( -70 ).and.lessThanOrEqual( -59 );
+			}
+		} );
+
+		it( "returns random negative/positive integer in selected range", () => {
+			for ( let i = 0; i < 1000; i++ ) {
+				Functions.random( -13, 13 ).should.be.Number().which.is.greaterThanOrEqual( -13 ).and.lessThanOrEqual( 13 );
+			}
+		} );
+	} );
+
+	describe( "contains `leftpad` which", () => {
+		it( "is a function", () => {
+			Functions.leftpad.should.be.Function();
+		} );
+
+		it( "returns string", () => {
+			Functions.leftpad( "", 10 ).should.be.String().which.is.equal( "          " );
+			Functions.leftpad( "test", 10 ).should.be.String().which.is.equal( "      test" );
+			Functions.leftpad( "", 10, "0" ).should.be.String().which.is.equal( "0000000000" );
+			Functions.leftpad( "test", 10, "0" ).should.be.String().which.is.equal( "000000test" );
+			Functions.leftpad( "some::test", 10 ).should.be.String().which.is.equal( "some::test" );
+			Functions.leftpad( "some::test", 10, "0" ).should.be.String().which.is.equal( "some::test" );
+			Functions.leftpad( "some:text:test", 10 ).should.be.String().which.is.equal( "some:text:test" );
+			Functions.leftpad( "some:text:test", 10, "0" ).should.be.String().which.is.equal( "some:text:test" );
+		} );
+	} );
+
+	describe( "contains `rightpad` which", () => {
+		it( "is a function", () => {
+			Functions.rightpad.should.be.Function();
+		} );
+
+		it( "returns string", () => {
+			Functions.rightpad( "", 10 ).should.be.String().which.is.equal( "          " );
+			Functions.rightpad( "test", 10 ).should.be.String().which.is.equal( "test      " );
+			Functions.rightpad( "", 10, "0" ).should.be.String().which.is.equal( "0000000000" );
+			Functions.rightpad( "test", 10, "0" ).should.be.String().which.is.equal( "test000000" );
+			Functions.rightpad( "some::test", 10 ).should.be.String().which.is.equal( "some::test" );
+			Functions.rightpad( "some::test", 10, "0" ).should.be.String().which.is.equal( "some::test" );
+			Functions.rightpad( "some:text:test", 10 ).should.be.String().which.is.equal( "some:text:test" );
+			Functions.rightpad( "some:text:test", 10, "0" ).should.be.String().which.is.equal( "some:text:test" );
+		} );
+	} );
+
+	describe( "contains `centerpad` which", () => {
+		it( "is a function", () => {
+			Functions.centerpad.should.be.Function();
+		} );
+
+		it( "returns string", () => {
+			Functions.centerpad( "", 10 ).should.be.String().which.is.equal( "          " );
+			Functions.centerpad( "test", 10 ).should.be.String().which.is.equal( "   test   " );
+			Functions.centerpad( "test", 9 ).should.be.String().which.is.equal( "  test   " );
+			Functions.centerpad( "", 10, "0" ).should.be.String().which.is.equal( "0000000000" );
+			Functions.centerpad( "test", 10, "0" ).should.be.String().which.is.equal( "000test000" );
+			Functions.centerpad( "test", 9, "0" ).should.be.String().which.is.equal( "00test000" );
+			Functions.centerpad( "some::test", 10 ).should.be.String().which.is.equal( "some::test" );
+			Functions.centerpad( "some::test", 10, "0" ).should.be.String().which.is.equal( "some::test" );
+			Functions.centerpad( "some:text:test", 10 ).should.be.String().which.is.equal( "some:text:test" );
+			Functions.centerpad( "some:text:test", 10, "0" ).should.be.String().which.is.equal( "some:text:test" );
+		} );
+	} );
+
+	describe( "contains `cookie` which", () => {
+		before( () => {
+			global.document = { cookie: "someName=someValue;furtherName=furtherValue;lastName=lastValue" };
+		} );
+
+		it( "is a function", () => {
+			Functions.cookie.should.be.Function();
+		} );
+
+		it( "returns value of cookie selected by its name", () => {
+			Functions.cookie( "someName" ).should.have.String().which.is.equal( "someValue" );
+			Functions.cookie( "furtherName" ).should.have.String().which.is.equal( "furtherValue" );
+			Functions.cookie( "lastName" ).should.have.String().which.is.equal( "lastValue" );
 		} );
 	} );
 } );
