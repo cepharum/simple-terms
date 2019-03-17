@@ -46,6 +46,32 @@ describe( "Term Processor", () => {
 			.should.be.true();
 	} );
 
+	it( "compiles term containing string literal with escaped quotes to invocable function", () => {
+		new Processor( `'0123\\'56789' == "0123'56789"` )
+			.evaluate( {} )
+			.should.be.true();
+
+		new Processor( `length( '0123\\'56789' ) == 10` )
+			.evaluate( {} )
+			.should.be.true();
+
+		new Processor( `"0123\\"56789" == '0123"56789'` )
+			.evaluate( {} )
+			.should.be.true();
+
+		new Processor( `length( "0123\\"56789" ) == 10` )
+			.evaluate( {} )
+			.should.be.true();
+
+		new Processor( `length( "0123\\'56789" ) == 10` )
+			.evaluate( {} )
+			.should.be.true();
+
+		new Processor( `length( '0123\\"56789' ) == 10` )
+			.evaluate( {} )
+			.should.be.true();
+	} );
+
 	it( "support negating result of invoked function", () => {
 		new Processor( "empty( value )" )
 			.evaluate( {

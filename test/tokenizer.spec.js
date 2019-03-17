@@ -274,6 +274,8 @@ describe( "Term Tokenizer", () => {
 					'""',
 					"'some string + 1, 2 (or more) characters usually considered non-string token'",
 					'"some string + 1, 2 (or more) characters usually considered non-string token"',
+					`'some single-quoted string contained escaped \\'literal\\' single quotes'`,
+					`"some single-quoted string contained escaped \\"literal\\" single quotes"`,
 				]
 					.forEach( code => checkTypesAndValues( code, [{ type: TokenTypes.LITERAL_STRING, value: code }] ) );
 			} );
