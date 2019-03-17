@@ -197,6 +197,13 @@ describe( "Term Tokenizer", () => {
 					"_ABC123",
 					"_ABC_123",
 					"_ABC_123_",
+					"$",
+					"$A",
+					"$ABC",
+					"$A1",
+					"$ABC123",
+					"$ABC$123",
+					"$ABC$123$",
 					"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
 				]
 					.forEach( code => checkTypesAndValues( code, [{ type: TokenTypes.KEYWORD, value: code }] ) );
