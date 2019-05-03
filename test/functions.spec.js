@@ -2009,4 +2009,124 @@ describe( "Set of functions available in scope of a term", () => {
 			}
 		} );
 	} );
+
+	describe( "contains `formatnumber` which", () => {
+		const positives = [
+			1, 0.4, 0.03, 0.005, 0.00008,
+			12345678, 12345678.4, 12345678.03, 12345678.005, 12345678.00008,
+		];
+
+		const negatives = [
+			0,
+			1, 0.4, 0.03, 0.005, 0.00008,
+			12345678, 12345678.4, 12345678.03, 12345678.005, 12345678.00008,
+		];
+
+		it( "is a function", () => {
+			Functions.formatnumber.should.be.Function();
+		} );
+
+		it( "returns empty string when invoked w/o any argument", () => {
+			Functions.formatnumber().should.be.String().which.is.empty();
+		} );
+
+		it( "returns empty string on providing non-numeric value in first argument", () => {
+			Functions.formatnumber( null ).should.be.String().which.is.empty();
+			Functions.formatnumber( undefined ).should.be.String().which.is.empty();
+			Functions.formatnumber( false ).should.be.String().which.is.empty();
+			Functions.formatnumber( true ).should.be.String().which.is.empty();
+			Functions.formatnumber( [] ).should.be.String().which.is.empty();
+			Functions.formatnumber( [ "hello" ] ).should.be.String().which.is.empty();
+			Functions.formatnumber( {} ).should.be.String().which.is.empty();
+			Functions.formatnumber( { value: 1 } ).should.be.String().which.is.empty();
+			Functions.formatnumber( "" ).should.be.String().which.is.empty();
+			Functions.formatnumber( "hello" ).should.be.String().which.is.empty();
+			Functions.formatnumber( function() { return 1; } ).should.be.String().which.is.empty();
+			Functions.formatnumber( () => 1 ).should.be.String().which.is.empty();
+		} );
+
+		it( "returns string representing numeric value provided in first argument", () => {
+			[0].concat( positives, negatives )
+				.forEach( value => {
+					Functions.formatnumber( value ).should.be.String().which.is.equal( `${value}` );
+				} );
+		} );
+
+		it( "uses decimal separator optionally provided in second argument", () => {
+			[ " ", ",", "_", ":", "A" ]
+				.forEach( decimal => {
+					[0].concat( positives, negatives )
+						.forEach( value => {
+							Functions.formatnumber( value, decimal ).should.be.String().which.is.equal( `${String( value ).replace( ".", decimal )}` );
+						} );
+				} );
+		} );
+
+		it( "uses thousands separator optionally provided in third argument", () => {
+			[ " ", ",", "_", ":", "A" ]
+				.forEach( thousands => {
+					[0].concat( positives, negatives )
+						.forEach( value => {
+							const formatted = Functions.formatnumber( value, ".", thousands );
+
+							formatted.should.be.String();
+
+							if ( Math.abs( value ) >= 1000 ) {
+								formatted.should.match( new RegExp( `^[^.]+${thousands}\\d{3}` ) )
+									.and.should.not.match( /^[^.]+\d{4}/ );
+							} else {
+								formatted.should.not.match( new RegExp( `^[^.]+${thousands}\\d` ) );
+							}
+						} );
+				} );
+		} );
+
+		it( "optionally renders number of fractional digits explicitly requested in fourth argument", () => {
+			for ( let digits = 0; digits < 10; digits++ ) {
+				[0].concat( positives, negatives )
+					.forEach( value => {
+						const scale = Math.pow( 10, digits );
+						const formatted = Functions.formatnumber( value, ".", null, digits );
+
+						if ( digits === 0 ) {
+							formatted.should.not.match( /\.\d*$/ );
+						} else if ( parseInt( value ) === Math.round( parseFloat( value ) * scale ) / scale ) {
+							formatted.should.match( new RegExp( `\\.0{${digits}}$` ) );
+						} else {
+							formatted.should.match( new RegExp( `\\.\\d{${digits}}$` ) );
+						}
+					} );
+			}
+		} );
+
+		it( "optionally renders number of fractional digits explicitly requested in fourth argument unless it would be all zeroes (using negative fraction size)", () => {
+			for ( let digits = 1; digits < 10; digits++ ) {
+				[0].concat( positives, negatives )
+					.forEach( value => {
+						const scale = Math.pow( 10, digits );
+						const formatted = Functions.formatnumber( value, ".", null, -digits );
+
+						formatted.should.be.String();
+
+						if ( parseInt( value ) === Math.round( parseFloat( value ) * scale ) / scale ) {
+							formatted.should.not.match( /\.\d*$/ );
+						} else {
+							formatted.should.match( new RegExp( `\\.\\d{${digits}}$` ) );
+						}
+					} );
+			}
+		} );
+
+		it( "prepends string resulting from any provided value with proper sign on demand", () => {
+			positives
+				.forEach( value => {
+					Functions.formatnumber( value, ".", "", null, true ).should.be.String().which.is.equal( `+${value}` );
+				} );
+		} );
+
+		it( "never prepends resulting string with sign when representing 0", () => {
+			Functions.formatnumber( 0, ".", "", null, true ).should.be.String().which.is.equal( `0` );
+			Functions.formatnumber( 0, ".", "", 2, true ).should.be.String().which.is.equal( `0.00` );
+		} );
+	} );
 } );
