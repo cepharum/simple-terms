@@ -240,16 +240,89 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.number( [1] ).should.be.Number().which.is.equal( 1 );
 		} );
 
+		it( "ignores non-numeric tail of provided value", () => {
+			Functions.number( "0 hello" ).should.be.Number().which.is.equal( 0 );
+			Functions.number( "1 something" ).should.be.Number().which.is.equal( 1 );
+			Functions.number( " 2 odd" ).should.be.Number().which.is.equal( 2 );
+			Functions.number( " -3 follows" ).should.be.Number().which.is.equal( -3 );
+			Functions.number( "4 thi!s number" ).should.be.Number().which.is.equal( 4 );
+		} );
+
 		it( "keeps fractional part of numeric value in first provided argument", () => {
 			Functions.number( 0.0001 ).should.be.Number().which.is.equal( 0.0001 );
 			Functions.number( -1.9 ).should.be.Number().which.is.equal( -1.9 );
 		} );
 
-		it( "ignores values provided in any additional argument", () => {
-			Functions.number( 5.3, 1 ).should.be.Number().which.is.equal( 5.3 );
-			Functions.number( 5.3, 1, 2 ).should.be.Number().which.is.equal( 5.3 );
-			Functions.number( 5.3, 1, 2, 3 ).should.be.Number().which.is.equal( 5.3 );
-			Functions.number( 5.3, 1, 2, 3, 4 ).should.be.Number().which.is.equal( 5.3 );
+		it( "accepts second argument selecting alternative decimal separator to support", () => {
+			Functions.number( "5", "." ).should.be.Number().which.is.equal( 5 );
+			Functions.number( "5", "," ).should.be.Number().which.is.equal( 5 );
+
+			Functions.number( "5.3", "." ).should.be.Number().which.is.equal( 5.3 );
+			Functions.number( "5.3", "," ).should.be.Number().which.is.equal( 5 );
+			Functions.number( "+56.03", "." ).should.be.Number().which.is.equal( 56.03 );
+			Functions.number( "+56.03", "," ).should.be.Number().which.is.equal( 56 );
+			Functions.number( "-56.03", "." ).should.be.Number().which.is.equal( -56.03 );
+			Functions.number( "-56.03", "," ).should.be.Number().which.is.equal( -56 );
+
+			Functions.number( "5,3", "." ).should.be.Number().which.is.equal( 5 );
+			Functions.number( "5,3", "," ).should.be.Number().which.is.equal( 5.3 );
+			Functions.number( "+56,03", "." ).should.be.Number().which.is.equal( 56 );
+			Functions.number( "+56,03", "," ).should.be.Number().which.is.equal( 56.03 );
+			Functions.number( "-56,03", "." ).should.be.Number().which.is.equal( -56 );
+			Functions.number( "-56,03", "," ).should.be.Number().which.is.equal( -56.03 );
+		} );
+
+		it( "accepts third argument selecting thousands separator to support", () => {
+			Functions.number( "123 456", ".", " " ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "123 456 789", ".", " " ).should.be.Number().which.is.equal( 123456789 );
+			Functions.number( "+123 456", ".", " " ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "-123 456", ".", " " ).should.be.Number().which.is.equal( -123456 );
+			Functions.number( "123456", ".", " " ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "123456789", ".", " " ).should.be.Number().which.is.equal( 123456789 );
+			Functions.number( "+123456", ".", " " ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "-123456", ".", " " ).should.be.Number().which.is.equal( -123456 );
+
+			Functions.number( "1 23 456", ".", " " ).should.be.Number().which.is.equal( 1 );
+			Functions.number( "12 3 456 789", ".", " " ).should.be.Number().which.is.equal( 12 );
+			Functions.number( "12 3456 789", ".", " " ).should.be.Number().which.is.equal( 12 );
+			Functions.number( "12 345 6 789", ".", " " ).should.be.Number().which.is.equal( 12345 );
+			Functions.number( "+123 4 56", ".", " " ).should.be.Number().which.is.equal( 123 );
+			Functions.number( "-123 45 6", ".", " " ).should.be.Number().which.is.equal( -123 );
+			Functions.number( "1234 56", ".", " " ).should.be.Number().which.is.equal( 1234 );
+			Functions.number( "123 45 6789", ".", " " ).should.be.Number().which.is.equal( 123 );
+			Functions.number( "+1 23456", ".", " " ).should.be.Number().which.is.equal( 1 );
+			Functions.number( "-1234 56", ".", " " ).should.be.Number().which.is.equal( -1234 );
+
+			Functions.number( "123.456", ",", "." ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "123.456.789", ",", "." ).should.be.Number().which.is.equal( 123456789 );
+			Functions.number( "+123.456", ",", "." ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "-123.456", ",", "." ).should.be.Number().which.is.equal( -123456 );
+			Functions.number( "123456", ",", "." ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "123456789", ",", "." ).should.be.Number().which.is.equal( 123456789 );
+			Functions.number( "+123456", ",", "." ).should.be.Number().which.is.equal( 123456 );
+			Functions.number( "-123456", ",", "." ).should.be.Number().which.is.equal( -123456 );
+
+			Functions.number( "1.23.456", ",", "." ).should.be.Number().which.is.equal( 1 );
+			Functions.number( "12.3.456 789", ",", "." ).should.be.Number().which.is.equal( 12 );
+			Functions.number( "12.3456.789", ",", "." ).should.be.Number().which.is.equal( 12 );
+			Functions.number( "12.345.6.789", ",", "." ).should.be.Number().which.is.equal( 12345 );
+			Functions.number( "+123.4.56", ",", "." ).should.be.Number().which.is.equal( 123 );
+			Functions.number( "-123.45.6", ",", "." ).should.be.Number().which.is.equal( -123 );
+			Functions.number( "1234.56", ",", "." ).should.be.Number().which.is.equal( 1234 );
+			Functions.number( "123.45.6789", ",", "." ).should.be.Number().which.is.equal( 123 );
+			Functions.number( "+1.23456", ",", "." ).should.be.Number().which.is.equal( 1 );
+			Functions.number( "-1234.56", ",", "." ).should.be.Number().which.is.equal( -1234 );
+
+			Functions.number( "1 23 456", ",", "." ).should.be.Number().which.is.equal( 1 );
+			Functions.number( "12 3 456 789", ",", "." ).should.be.Number().which.is.equal( 12 );
+			Functions.number( "12 3456 789", ",", "." ).should.be.Number().which.is.equal( 12 );
+			Functions.number( "12 345 6.789", ",", "." ).should.be.Number().which.is.equal( 12 );
+			Functions.number( "+123 4 56", ",", "." ).should.be.Number().which.is.equal( 123 );
+			Functions.number( "-123 45 6", ",", "." ).should.be.Number().which.is.equal( -123 );
+			Functions.number( "1234 56", ",", "." ).should.be.Number().which.is.equal( 1234 );
+			Functions.number( "123 45 6789", ",", "." ).should.be.Number().which.is.equal( 123 );
+			Functions.number( "+1 23456", ",", "." ).should.be.Number().which.is.equal( 1 );
+			Functions.number( "-1234 56", ",", "." ).should.be.Number().which.is.equal( -1234 );
 		} );
 	} );
 
