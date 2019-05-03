@@ -1848,4 +1848,165 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.floor( "-10.0000000000001", -2 ).should.be.Number().which.is.equal( -0 );
 		} );
 	} );
+
+	describe( "contains `min` which", () => {
+		it( "is a function", () => {
+			Functions.min.should.be.Function();
+		} );
+
+		it( "returns solely provided numeric value", () => {
+			Functions.min( 45.834 ).should.be.Number().which.is.equal( 45.834 );
+		} );
+
+		it( "returns numeric value described by solely provided string", () => {
+			Functions.min( "45.834" ).should.be.Number().which.is.equal( 45.834 );
+		} );
+
+		it( "returns numeric value described by solely provided string", () => {
+			Functions.min( "45.834" ).should.be.Number().which.is.equal( 45.834 );
+		} );
+
+		it( "returns NaN on providing any non-numeric value in sole argument", () => {
+			Functions.min( null ).should.be.NaN();
+			Functions.min( undefined ).should.be.NaN();
+			Functions.min( false ).should.be.NaN();
+			Functions.min( "" ).should.be.NaN();
+			Functions.min( "Hello" ).should.be.NaN();
+			Functions.min( [] ).should.be.NaN();
+			Functions.min( [ "Hello" ] ).should.be.NaN();
+			Functions.min( {} ).should.be.NaN();
+			Functions.min( { value: 1 } ).should.be.NaN();
+			Functions.min( function() {} ).should.be.NaN();
+			Functions.min( () => 1 ).should.be.NaN();
+		} );
+
+		it( "returns least numeric value of several provided arguments", () => {
+			Functions.min( 3, 5 ).should.be.Number().which.is.equal( 3 );
+			Functions.min( "3", "5" ).should.be.Number().which.is.equal( 3 );
+			Functions.min( 3, -5 ).should.be.Number().which.is.equal( -5 );
+			Functions.min( "3", "-5" ).should.be.Number().which.is.equal( -5 );
+
+			const least = -5;
+
+			// generate several lists of random numeric values, inject some
+			// non-numeric staff and some definitely least numeric value
+			for ( let i = 0; i < 100; i++ ) {
+				const set = new Array( 100 );
+
+				for ( let j = 0; j < 100; j++ ) {
+					set[j] = Math.random() * 100000000;
+				}
+
+				set[Math.floor( Math.random() * 100 )] = null;
+				set[Math.floor( Math.random() * 100 )] = undefined;
+				set[Math.floor( Math.random() * 100 )] = false;
+				set[Math.floor( Math.random() * 100 )] = "";
+				set[Math.floor( Math.random() * 100 )] = [];
+				set[Math.floor( Math.random() * 100 )] = {};
+				set[Math.floor( Math.random() * 100 )] = [ "hello" ];
+				set[Math.floor( Math.random() * 100 )] = { value: -10 };
+				set[Math.floor( Math.random() * 100 )] = () => -10;
+				set[Math.floor( Math.random() * 100 )] = least;
+
+				Functions.min( ...set ).should.be.Number().which.is.equal( least );
+			}
+		} );
+	} );
+
+	describe( "contains `max` which", () => {
+		it( "is a function", () => {
+			Functions.max.should.be.Function();
+		} );
+
+		it( "returns solely provided numeric value", () => {
+			Functions.max( 45.834 ).should.be.Number().which.is.equal( 45.834 );
+		} );
+
+		it( "returns numeric value described by solely provided string", () => {
+			Functions.max( "45.834" ).should.be.Number().which.is.equal( 45.834 );
+		} );
+
+		it( "returns numeric value described by solely provided string", () => {
+			Functions.max( "45.834" ).should.be.Number().which.is.equal( 45.834 );
+		} );
+
+		it( "returns NaN on providing any non-numeric value in sole argument", () => {
+			Functions.max( null ).should.be.NaN();
+			Functions.max( undefined ).should.be.NaN();
+			Functions.max( false ).should.be.NaN();
+			Functions.max( "" ).should.be.NaN();
+			Functions.max( "Hello" ).should.be.NaN();
+			Functions.max( [] ).should.be.NaN();
+			Functions.max( [ "Hello" ] ).should.be.NaN();
+			Functions.max( {} ).should.be.NaN();
+			Functions.max( { value: 1 } ).should.be.NaN();
+			Functions.max( function() {} ).should.be.NaN();
+			Functions.max( () => 1 ).should.be.NaN();
+		} );
+
+		it( "returns greatest numeric value of several provided arguments", () => {
+			Functions.max( 3, 5 ).should.be.Number().which.is.equal( 5 );
+			Functions.max( "3", "5" ).should.be.Number().which.is.equal( 5 );
+			Functions.max( 3, -5 ).should.be.Number().which.is.equal( 3 );
+			Functions.max( "3", "-5" ).should.be.Number().which.is.equal( 3 );
+
+			const greatest = 50000001;
+
+			// generate several lists of random numeric values, inject some
+			// non-numeric staff and some definitely greatest numeric value
+			for ( let i = 0; i < 100; i++ ) {
+				const set = new Array( 100 );
+
+				for ( let j = 0; j < 100; j++ ) {
+					set[j] = Math.random() * 100000000 - 50000000;
+				}
+
+				set[Math.floor( Math.random() * 100 )] = null;
+				set[Math.floor( Math.random() * 100 )] = undefined;
+				set[Math.floor( Math.random() * 100 )] = false;
+				set[Math.floor( Math.random() * 100 )] = "";
+				set[Math.floor( Math.random() * 100 )] = [];
+				set[Math.floor( Math.random() * 100 )] = {};
+				set[Math.floor( Math.random() * 100 )] = [ "hello" ];
+				set[Math.floor( Math.random() * 100 )] = { value: 50000002 };
+				set[Math.floor( Math.random() * 100 )] = () => 50000002;
+				set[Math.floor( Math.random() * 100 )] = greatest;
+
+				Functions.max( ...set ).should.be.Number().which.is.equal( greatest );
+			}
+		} );
+	} );
+
+	describe( "contains `abs` which", () => {
+		it( "is a function", () => {
+			Functions.abs.should.be.Function();
+		} );
+
+		it( "returns NaN when invoked without argument", () => {
+			Functions.abs().should.be.NaN();
+		} );
+
+		it( "returns NaN when invoked with non-numeric value in first argument", () => {
+			Functions.abs( null ).should.be.NaN();
+			Functions.abs( undefined ).should.be.NaN();
+			Functions.abs( false ).should.be.NaN();
+			Functions.abs( true ).should.be.NaN();
+			Functions.abs( "" ).should.be.NaN();
+			Functions.abs( [] ).should.be.NaN();
+			Functions.abs( [ "hello" ] ).should.be.NaN();
+			Functions.abs( {} ).should.be.NaN();
+			Functions.abs( { value: -10 } ).should.be.NaN();
+			Functions.abs( () => {} ).should.be.NaN();
+		} );
+
+		it( "returns absolute amount of numeric value provided in first argument", () => {
+			for ( let i = 0; i < 500; i++ ) {
+				const value = Math.random() * 100000000 - 50000000;
+				const abs = value < 0 ? -value : value;
+
+				Functions.abs( value ).should.be.Number().which.is.equal( abs );
+				Functions.abs( `${value}` ).should.be.Number().which.is.equal( abs );
+			}
+		} );
+	} );
 } );
