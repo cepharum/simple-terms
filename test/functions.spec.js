@@ -1728,4 +1728,124 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.cookie( "lastName" ).should.have.String().which.is.equal( "lastValue" );
 		} );
 	} );
+
+	describe( "contains `ceil` which", () => {
+		it( "is a function", () => {
+			Functions.ceil.should.be.Function();
+		} );
+
+		it( "returns provided value rounded up to next integer", () => {
+			Functions.ceil( 45.834 ).should.be.Number().which.is.equal( 46 );
+			Functions.ceil( 45.123 ).should.be.Number().which.is.equal( 46 );
+			Functions.ceil( 45.0000000000001 ).should.be.Number().which.is.equal( 46 );
+			Functions.ceil( "10.0000000000001" ).should.be.Number().which.is.equal( 11 );
+		} );
+
+		it( "returns provided value rounded the nearest smaller integer on negative values", () => {
+			Functions.ceil( -45.802 ).should.be.Number().which.is.equal( -46 );
+			Functions.ceil( -45.123 ).should.be.Number().which.is.equal( -46 );
+			Functions.ceil( -45.0000000000001 ).should.be.Number().which.is.equal( -46 );
+			Functions.ceil( "-10.0000000000001" ).should.be.Number().which.is.equal( -11 );
+		} );
+
+		it( "accepts precision in second argument", () => {
+			Functions.ceil( 45.834, 1 ).should.be.Number().which.is.equal( 45.9 );
+			Functions.ceil( 45.834, 2 ).should.be.Number().which.is.equal( 45.84 );
+			Functions.ceil( 45.834, -1 ).should.be.Number().which.is.equal( 50 );
+			Functions.ceil( 45.834, -2 ).should.be.Number().which.is.equal( 100 );
+			Functions.ceil( 45.123, 1 ).should.be.Number().which.is.equal( 45.2 );
+			Functions.ceil( 45.123, 2 ).should.be.Number().which.is.equal( 45.13 );
+			Functions.ceil( 45.123, -1 ).should.be.Number().which.is.equal( 50 );
+			Functions.ceil( 45.123, -2 ).should.be.Number().which.is.equal( 100 );
+			Functions.ceil( 45.0000000000001 ).should.be.Number().which.is.equal( 46 );
+			Functions.ceil( 45.0000000000001, 1 ).should.be.Number().which.is.equal( 45.1 );
+			Functions.ceil( 45.0000000000001, 2 ).should.be.Number().which.is.equal( 45.01 );
+			Functions.ceil( 45.0000000000001, -1 ).should.be.Number().which.is.equal( 50 );
+			Functions.ceil( 45.0000000000001, -2 ).should.be.Number().which.is.equal( 100 );
+			Functions.ceil( "10.0000000000001" ).should.be.Number().which.is.equal( 11 );
+			Functions.ceil( "10.0000000000001", 1 ).should.be.Number().which.is.equal( 10.1 );
+			Functions.ceil( "10.0000000000001", 2 ).should.be.Number().which.is.equal( 10.01 );
+			Functions.ceil( "10.0000000000001", -1 ).should.be.Number().which.is.equal( 20 );
+			Functions.ceil( "10.0000000000001", -2 ).should.be.Number().which.is.equal( 100 );
+
+			Functions.ceil( -45.834, 1 ).should.be.Number().which.is.equal( -45.9 );
+			Functions.ceil( -45.834, 2 ).should.be.Number().which.is.equal( -45.84 );
+			Functions.ceil( -45.834, -1 ).should.be.Number().which.is.equal( -50 );
+			Functions.ceil( -45.834, -2 ).should.be.Number().which.is.equal( -100 );
+			Functions.ceil( -45.123, 1 ).should.be.Number().which.is.equal( -45.2 );
+			Functions.ceil( -45.123, 2 ).should.be.Number().which.is.equal( -45.13 );
+			Functions.ceil( -45.123, -1 ).should.be.Number().which.is.equal( -50 );
+			Functions.ceil( -45.123, -2 ).should.be.Number().which.is.equal( -100 );
+			Functions.ceil( -45.0000000000001 ).should.be.Number().which.is.equal( -46 );
+			Functions.ceil( -45.0000000000001, 1 ).should.be.Number().which.is.equal( -45.1 );
+			Functions.ceil( -45.0000000000001, 2 ).should.be.Number().which.is.equal( -45.01 );
+			Functions.ceil( -45.0000000000001, -1 ).should.be.Number().which.is.equal( -50 );
+			Functions.ceil( -45.0000000000001, -2 ).should.be.Number().which.is.equal( -100 );
+			Functions.ceil( "-10.0000000000001" ).should.be.Number().which.is.equal( -11 );
+			Functions.ceil( "-10.0000000000001", 1 ).should.be.Number().which.is.equal( -10.1 );
+			Functions.ceil( "-10.0000000000001", 2 ).should.be.Number().which.is.equal( -10.01 );
+			Functions.ceil( "-10.0000000000001", -1 ).should.be.Number().which.is.equal( -20 );
+			Functions.ceil( "-10.0000000000001", -2 ).should.be.Number().which.is.equal( -100 );
+		} );
+	} );
+
+	describe( "contains `floor` which", () => {
+		it( "is a function", () => {
+			Functions.floor.should.be.Function();
+		} );
+
+		it( "returns provided value rounded up to next integer", () => {
+			Functions.floor( 45.834 ).should.be.Number().which.is.equal( 45 );
+			Functions.floor( 45.123 ).should.be.Number().which.is.equal( 45 );
+			Functions.floor( 45.0000000000001 ).should.be.Number().which.is.equal( 45 );
+			Functions.floor( "10.0000000000001" ).should.be.Number().which.is.equal( 10 );
+		} );
+
+		it( "returns provided value rounded the nearest smaller integer on negative values", () => {
+			Functions.floor( -45.802 ).should.be.Number().which.is.equal( -45 );
+			Functions.floor( -45.123 ).should.be.Number().which.is.equal( -45 );
+			Functions.floor( -45.0000000000001 ).should.be.Number().which.is.equal( -45 );
+			Functions.floor( "-10.0000000000001" ).should.be.Number().which.is.equal( -10 );
+		} );
+
+		it( "accepts precision in second argument", () => {
+			Functions.floor( 45.834, 1 ).should.be.Number().which.is.equal( 45.8 );
+			Functions.floor( 45.834, 2 ).should.be.Number().which.is.equal( 45.83 );
+			Functions.floor( 45.834, -1 ).should.be.Number().which.is.equal( 40 );
+			Functions.floor( 45.834, -2 ).should.be.Number().which.is.equal( 0 );
+			Functions.floor( 45.123, 1 ).should.be.Number().which.is.equal( 45.1 );
+			Functions.floor( 45.123, 2 ).should.be.Number().which.is.equal( 45.12 );
+			Functions.floor( 45.123, -1 ).should.be.Number().which.is.equal( 40 );
+			Functions.floor( 45.123, -2 ).should.be.Number().which.is.equal( 0 );
+			Functions.floor( 45.0000000000001 ).should.be.Number().which.is.equal( 45 );
+			Functions.floor( 45.0000000000001, 1 ).should.be.Number().which.is.equal( 45 );
+			Functions.floor( 45.0000000000001, 2 ).should.be.Number().which.is.equal( 45 );
+			Functions.floor( 45.0000000000001, -1 ).should.be.Number().which.is.equal( 40 );
+			Functions.floor( 45.0000000000001, -2 ).should.be.Number().which.is.equal( 0 );
+			Functions.floor( "10.0000000000001" ).should.be.Number().which.is.equal( 10 );
+			Functions.floor( "10.0000000000001", 1 ).should.be.Number().which.is.equal( 10 );
+			Functions.floor( "10.0000000000001", 2 ).should.be.Number().which.is.equal( 10 );
+			Functions.floor( "10.0000000000001", -1 ).should.be.Number().which.is.equal( 10 );
+			Functions.floor( "10.0000000000001", -2 ).should.be.Number().which.is.equal( 0 );
+
+			Functions.floor( -45.834, 1 ).should.be.Number().which.is.equal( -45.8 );
+			Functions.floor( -45.834, 2 ).should.be.Number().which.is.equal( -45.83 );
+			Functions.floor( -45.834, -1 ).should.be.Number().which.is.equal( -40 );
+			Functions.floor( -45.834, -2 ).should.be.Number().which.is.equal( -0 );
+			Functions.floor( -45.123, 1 ).should.be.Number().which.is.equal( -45.1 );
+			Functions.floor( -45.123, 2 ).should.be.Number().which.is.equal( -45.12 );
+			Functions.floor( -45.123, -1 ).should.be.Number().which.is.equal( -40 );
+			Functions.floor( -45.123, -2 ).should.be.Number().which.is.equal( -0 );
+			Functions.floor( -45.0000000000001 ).should.be.Number().which.is.equal( -45 );
+			Functions.floor( -45.0000000000001, 1 ).should.be.Number().which.is.equal( -45 );
+			Functions.floor( -45.0000000000001, 2 ).should.be.Number().which.is.equal( -45 );
+			Functions.floor( -45.0000000000001, -1 ).should.be.Number().which.is.equal( -40 );
+			Functions.floor( -45.0000000000001, -2 ).should.be.Number().which.is.equal( -0 );
+			Functions.floor( "-10.0000000000001" ).should.be.Number().which.is.equal( -10 );
+			Functions.floor( "-10.0000000000001", 1 ).should.be.Number().which.is.equal( -10 );
+			Functions.floor( "-10.0000000000001", 2 ).should.be.Number().which.is.equal( -10 );
+			Functions.floor( "-10.0000000000001", -1 ).should.be.Number().which.is.equal( -10 );
+			Functions.floor( "-10.0000000000001", -2 ).should.be.Number().which.is.equal( -0 );
+		} );
+	} );
 } );
