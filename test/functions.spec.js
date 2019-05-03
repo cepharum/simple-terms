@@ -1873,10 +1873,10 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.min( "" ).should.be.NaN();
 			Functions.min( "Hello" ).should.be.NaN();
 			Functions.min( [] ).should.be.NaN();
-			Functions.min( [ "Hello" ] ).should.be.NaN();
+			Functions.min( ["Hello"] ).should.be.NaN();
 			Functions.min( {} ).should.be.NaN();
 			Functions.min( { value: 1 } ).should.be.NaN();
-			Functions.min( function() {} ).should.be.NaN();
+			Functions.min( function() { return 1; } ).should.be.NaN();
 			Functions.min( () => 1 ).should.be.NaN();
 		} );
 
@@ -1903,7 +1903,7 @@ describe( "Set of functions available in scope of a term", () => {
 				set[Math.floor( Math.random() * 100 )] = "";
 				set[Math.floor( Math.random() * 100 )] = [];
 				set[Math.floor( Math.random() * 100 )] = {};
-				set[Math.floor( Math.random() * 100 )] = [ "hello" ];
+				set[Math.floor( Math.random() * 100 )] = ["hello"];
 				set[Math.floor( Math.random() * 100 )] = { value: -10 };
 				set[Math.floor( Math.random() * 100 )] = () => -10;
 				set[Math.floor( Math.random() * 100 )] = least;
@@ -1937,10 +1937,10 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.max( "" ).should.be.NaN();
 			Functions.max( "Hello" ).should.be.NaN();
 			Functions.max( [] ).should.be.NaN();
-			Functions.max( [ "Hello" ] ).should.be.NaN();
+			Functions.max( ["Hello"] ).should.be.NaN();
 			Functions.max( {} ).should.be.NaN();
 			Functions.max( { value: 1 } ).should.be.NaN();
-			Functions.max( function() {} ).should.be.NaN();
+			Functions.max( function() { return 1; } ).should.be.NaN();
 			Functions.max( () => 1 ).should.be.NaN();
 		} );
 
@@ -1958,7 +1958,7 @@ describe( "Set of functions available in scope of a term", () => {
 				const set = new Array( 100 );
 
 				for ( let j = 0; j < 100; j++ ) {
-					set[j] = Math.random() * 100000000 - 50000000;
+					set[j] = ( Math.random() * 100000000 ) - 50000000;
 				}
 
 				set[Math.floor( Math.random() * 100 )] = null;
@@ -1967,7 +1967,7 @@ describe( "Set of functions available in scope of a term", () => {
 				set[Math.floor( Math.random() * 100 )] = "";
 				set[Math.floor( Math.random() * 100 )] = [];
 				set[Math.floor( Math.random() * 100 )] = {};
-				set[Math.floor( Math.random() * 100 )] = [ "hello" ];
+				set[Math.floor( Math.random() * 100 )] = ["hello"];
 				set[Math.floor( Math.random() * 100 )] = { value: 50000002 };
 				set[Math.floor( Math.random() * 100 )] = () => 50000002;
 				set[Math.floor( Math.random() * 100 )] = greatest;
@@ -1993,15 +1993,16 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.abs( true ).should.be.NaN();
 			Functions.abs( "" ).should.be.NaN();
 			Functions.abs( [] ).should.be.NaN();
-			Functions.abs( [ "hello" ] ).should.be.NaN();
+			Functions.abs( ["hello"] ).should.be.NaN();
 			Functions.abs( {} ).should.be.NaN();
 			Functions.abs( { value: -10 } ).should.be.NaN();
-			Functions.abs( () => {} ).should.be.NaN();
+			Functions.abs( function() { return -10; } ).should.be.NaN();
+			Functions.abs( () => -10 ).should.be.NaN();
 		} );
 
 		it( "returns absolute amount of numeric value provided in first argument", () => {
 			for ( let i = 0; i < 500; i++ ) {
-				const value = Math.random() * 100000000 - 50000000;
+				const value = ( Math.random() * 100000000 ) - 50000000;
 				const abs = value < 0 ? -value : value;
 
 				Functions.abs( value ).should.be.Number().which.is.equal( abs );
@@ -2036,7 +2037,7 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.formatnumber( false ).should.be.String().which.is.empty();
 			Functions.formatnumber( true ).should.be.String().which.is.empty();
 			Functions.formatnumber( [] ).should.be.String().which.is.empty();
-			Functions.formatnumber( [ "hello" ] ).should.be.String().which.is.empty();
+			Functions.formatnumber( ["hello"] ).should.be.String().which.is.empty();
 			Functions.formatnumber( {} ).should.be.String().which.is.empty();
 			Functions.formatnumber( { value: 1 } ).should.be.String().which.is.empty();
 			Functions.formatnumber( "" ).should.be.String().which.is.empty();
