@@ -1635,9 +1635,9 @@ describe( "Set of functions available in scope of a term", () => {
 			Functions.random.should.be.Function();
 		} );
 
-		it( "returns random positive integer", () => {
+		it( "returns random positive integer in interval [0,1000[ by default", () => {
 			for ( let i = 0; i < 1000; i++ ) {
-				Functions.random().should.be.Number().which.is.greaterThanOrEqual( 0 );
+				Functions.random().should.be.Number().which.is.greaterThanOrEqual( 0 ).and.is.lessThan( 1000 );
 			}
 		} );
 
