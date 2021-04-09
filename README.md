@@ -1,3 +1,7 @@
+# We've moved!
+
+This project is now maintained in [another repository](https://gitlab.com/cepharum-foss/simple-terms).
+
 # Simple Terms
 
 This package provides a simple terms processor suitable for reading hierarchical data structures and deriving new information from that. It is designed to support customized processing of data without exposing a full Javascript engine or and intentionally excludes support for code to adjust any provided data. 
